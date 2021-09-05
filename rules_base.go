@@ -20,6 +20,7 @@ type Rule interface {
 	Tsumo(player *Player) error
 	CanNineYaochus(player *Player) error
 	NineYaochus(player *Player) error
+	CanAgari(player *Player, last Tile) ([]Agari, error)
 }
 
 type BaseRule struct {

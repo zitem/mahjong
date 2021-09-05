@@ -8,7 +8,7 @@ func Test(t *testing.T) {
 		*players.Now() = Player{FieldWind: FieldWind(i), Score: 25000, Tiles: make([]Tile, 0)}
 		players.ToNext()
 	}
-	
+
 	for i := 0; i < 4; i++ {
 		now := players.Now()
 		if now.FieldWind != FieldWind(i) {
@@ -24,7 +24,7 @@ func TestPlayers_find(t *testing.T) {
 		*players.Now() = Player{FieldWind: FieldWind(i), Score: 25000, Tiles: make([]Tile, 0)}
 		players.ToNext()
 	}
-	
+
 	now := players.Now()
 	find := players.find(now)
 	if find.Value != now {

@@ -8,19 +8,20 @@ type Player struct {
 	FieldWind
 	Score int
 	Phase
-	Jun
+	jun      Jun
 	Riichi   Jun
 	Tiles    []Tile
 	XXXs     []Triplet
 	XYZs     []Sequential
 	XXXXs    []Quad
-	Discards []Tile
+	Discards []DiscardTile
 	LastDraw Tile
+	Through  bool
 }
 
 func (player *Player) HasDiscarded(tile Tile) bool {
 	for _, discard := range player.Discards {
-		if discard == tile {
+		if discard.Tile == tile {
 			return true
 		}
 	}
@@ -127,21 +128,25 @@ func (players *Players) ToNext() *Player {
 
 func (players *Players) FindField(field FieldWind) *Player {
 	var p *Player
-	players.ring.Do(func(v interface{}) {
-		if v.(*Player).FieldWind == field {
-			p = v.(*Player)
-		}
-	})
+	players.ring.Do(
+		func(v interface{}) {
+			if v.(*Player).FieldWind == field {
+				p = v.(*Player)
+			}
+		},
+	)
 	return p
 }
 
 func (players *Players) FindWind(wind FieldWind, round Round) *Player {
 	var p *Player
-	players.ring.Do(func(v interface{}) {
-		if v.(*Player).Wind(round) == wind {
-			p = v.(*Player)
-		}
-	})
+	players.ring.Do(
+		func(v interface{}) {
+			if v.(*Player).Wind(round) == wind {
+				p = v.(*Player)
+			}
+		},
+	)
 	return p
 }
 
@@ -170,9 +175,11 @@ func (players *Players) Set(player *Player) {
 }
 
 func (players *Players) Do(fn func(players *Player)) {
-	players.ring.Do(func(v interface{}) {
-		fn(v.(*Player))
-	})
+	players.ring.Do(
+		func(v interface{}) {
+			fn(v.(*Player))
+		},
+	)
 }
 
 func (players *Players) find(player *Player) *ring.Ring {

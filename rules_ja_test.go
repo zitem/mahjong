@@ -309,7 +309,7 @@ func TestJapaneseBaseRule_CanNineYaochus(t *testing.T) {
 				player: &Player{
 					Tiles: toSampleTiles(
 						[]TileType{
-							Dots1, Dots3, Dots4, Dots5, Dots6, Dots8, Dots9,  Bamboo1, Bamboo9, Characters1, Characters9, East,West,Green,
+							Dots1, Dots3, Dots4, Dots5, Dots6, Dots8, Dots9, Bamboo1, Bamboo9, Characters1, Characters9, East, West, Green,
 						},
 					),
 				},

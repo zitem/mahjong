@@ -82,15 +82,24 @@ func (maj *Mahjong) Haipai() {
 	maj.draw()
 	firstPlayer := maj.Players.ToNext()
 	firstPlayer.Phase = RemoveTile
-	firstPlayer.Jun++
+	firstPlayer.jun++
 }
 
 func (maj *Mahjong) draw() Tile {
+	maj.Players.Do(
+		func(player *Player) {
+			if _, err := maj.Rule.CanAgari(player, maj.LastTile); err == nil {
+				player.Through = true
+			}
+		})
 	tile := maj.Tiles[maj.NextTile]
 	player := maj.Players.Now()
 	player.LastDraw = tile
 	player.Tiles = append(player.Tiles, tile)
 	maj.NextTile++
+	if player.Riichi != 0 {
+		player.Through = false
+	}
 	return tile
 }
 
@@ -141,7 +150,8 @@ func (maj *Mahjong) dahai(player *Player, i int) {
 	player.Tiles = append(player.Tiles[:i], player.Tiles[i+1:]...)
 	maj.LastTile = tile
 	maj.LastTilePlayer = player
-	player.Discards = append(player.Discards, tile)
+	discard := DiscardTile{Tile: tile, Jun: maj.Jun(), TsumoGiri: i == 13}
+	player.Discards = append(player.Discards, discard)
 	maj.toNextPlayer()
 }
 
@@ -201,6 +211,7 @@ func (maj *Mahjong) Chii(player *Player, tileA, tileB Tile) error {
 	xyz[0] = maj.LastTile
 	player.XYZs = append(player.XYZs, Sequential{xyz, false})
 	maj.LastTile = Tile{}
+
 	return nil
 }
 
@@ -452,8 +463,8 @@ func (maj *Mahjong) Jun() Jun {
 	var max Jun
 	maj.Players.Do(
 		func(player *Player) {
-			if player.Jun > max {
-				max = player.Jun
+			if player.jun > max {
+				max = player.jun
 			}
 		},
 	)
@@ -476,13 +487,13 @@ func (maj *Mahjong) playerTakeTurn(player *Player) {
 	maj.Players.Now().Phase.Change(Idle)
 	maj.Players.Set(player)
 	maj.Players.Right(maj.LastTilePlayer).Phase.Change(Idle)
-	player.Jun++
+	player.jun++
 }
 
 func (maj *Mahjong) toNextPlayer() *Player {
 	player := maj.Players.ToNext()
 	player.Phase.Change(AddTile)
-	player.Jun++
+	player.jun++
 	return player
 }
 

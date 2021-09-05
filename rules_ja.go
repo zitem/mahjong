@@ -209,7 +209,14 @@ func (rule JapaneseBaseRule) NineYaochus(player *Player) error {
 }
 
 func (rule JapaneseBaseRule) FuriTen(player *Player) bool {
-	//todo
+	for _, discard := range player.Discards {
+		if _, err := rule.CanAgari(player, discard.Tile); err != nil {
+			return true
+		}
+	}
+	if player.Through {
+		return true
+	}
 	return false
 }
 

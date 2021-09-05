@@ -241,6 +241,12 @@ type Quad struct {
 	Jun
 }
 
+type DiscardTile struct {
+	Tile
+	Jun
+	TsumoGiri bool
+}
+
 type FuuroType int8
 
 const (
